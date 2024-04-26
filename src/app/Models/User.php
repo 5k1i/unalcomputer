@@ -7,10 +7,11 @@ use App\Enums\RoleEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -44,28 +45,5 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
-    }
-
-    public function role(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(Role::class);
-    }
-
-    public function isAdmin(): bool
-    {
-        return $this->role()->logicalId === RoleEnum::ADMIN;
-    }
-
-    public function assignRole($roleEnum)
-    {
-        $role = Role::where('logicalId', $roleEnum)->firstOrFail();
-        $this->role()->associate($role);
-        $this->save();
-    }
-
-    public function removeRole()
-    {
-        $this->role()->dissociate();
-        $this->save();
     }
 }

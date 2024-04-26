@@ -2,11 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Enums\RoleEnum;
-use App\Models\Role;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,29 +15,22 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // User::factory(10)->create();
-
-        $this->createRoles();
-
-        User::factory()->create([
-            'name' => 'Test User',
+        $admin = User::factory()->create([
+            'name' => 'Test Admin',
             'password' => bcrypt('password'),
             'email' => 'test@example.com',
-        ])->assignRole(RoleEnum::ADMIN);
-    }
+        ]);
 
-    /**
-     * @return void
-     */
-    public function createRoles(): void
-    {
-        $adminRole = new Role();
-        $adminRole->name = "admin";
-        $adminRole->logicalId = RoleEnum::ADMIN;
-        $adminRole->save();
+        $user = User::factory()->create([
+            'name' => 'Test User',
+            'password' => bcrypt('password'),
+            'email' => 'user@example.com',
+        ]);
 
-        $adminRole = new Role();
-        $adminRole->name = "user";
-        $adminRole->logicalId = RoleEnum::USER;
-        $adminRole->save();
+        $adminRole = Role::create(['name' => 'Admin']);
+        $userRole = Role::create(['name' => 'User']);
+
+        $admin->assignRole($adminRole);
+        $user->assignRole($userRole);
     }
 }

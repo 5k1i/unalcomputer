@@ -23,11 +23,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Gate::define(GateEnum::EDIT_SETTINGS, function (User $user) {
-            return $user->isAdmin()
-                ? Response::allow()
-                : Response::deny("Yetkiniz yok.");
-        });
 
     }
 }
